@@ -146,19 +146,43 @@
 <p>The DeFiChain blockchain is a collection of intedependent blocks stored on a distributed digital ledger. Each block contains information about the block previous to it and they form a chain - with each additional block reinforcing the ones before it.</p>
 <p>Each block consists of a block header and a body. The block header contains metadata about the block and its contents, and the body contains a list of transactions in that block. Blocks and transactions are identified by their SHA256 hashes.</p>
 <h2 id="block-header"><a class="header" href="#block-header">Block header</a></h2>
-<p>The header format of DeFiChain blocks is as follows.</p>
+<p>The header format of DeFiChain blocks is as follows. The implementation of the block header can be found in the class <code>CBlockHeader</code> in file <a href="https://github.com/DeFiCh/ain/blob/master/src/primitives/block.h#L23"><code>src/primitives/block.h</code></a>.</p>
 <table><thead><tr><th>Name</th><th>Data Type</th><th>Description</th></tr></thead><tbody>
-<tr><td>nVersion</td><td>int32_t</td><td>Compute block version per <code>ComputeBlockVersion</code>. Usually 536870912.</td></tr>
-<tr><td>hashPrevBlock</td><td>uint256</td><td>Double hash of previous block header.</td></tr>
-<tr><td>hashMerkleRoot</td><td>uint256</td><td>Double hash of merkle root of transaction merkle tree.</td></tr>
+<tr><td>nVersion</td><td>int32_t</td><td>Used to resolve soft forks. Usually 536870912. For details on how nVersion is processed and used, read <a href="https://github.com/bitcoin/bips/blob/master/bip-0009.mediawiki">BIP9</a>.</td></tr>
+<tr><td>hashPrevBlock</td><td>uint256</td><td>Double SHA256 hash of previous block header.</td></tr>
+<tr><td>hashMerkleRoot</td><td>uint256</td><td>Double SHA256 hash of merkle root of transaction merkle tree.</td></tr>
 <tr><td>nTime</td><td>uint32_t</td><td>The block time is a Unix epoch time when the miner started hashing the header (according to the miner). Must be strictly greater than the median time of the previous 11 blocks.</td></tr>
 <tr><td>nBits</td><td>uint32_t</td><td>An encoded version of the target threshold this block’s header hash must be less than or equal to.</td></tr>
-<tr><td>deprecatedHeight</td><td>uint64_t</td><td>Block height of the current block.</td></tr>
+<tr><td>deprecatedHeight</td><td>uint64_t</td><td>[Deprecated] Block height of the current block.</td></tr>
 <tr><td>mintedBlocks</td><td>uint64_t</td><td>Number of blocks this masternode has mined.</td></tr>
 <tr><td>stakeModifier</td><td>uint256</td><td>A stake modifier is a collective source of random entropy for mining. It is equal to <code>SHA256({previous stake modifier}, {masternode ID}).</code></td></tr>
 <tr><td>sig</td><td>vector<unsigned char></td><td>Signed block header using miner's public key.</td></tr>
 </tbody></table>
+<h3 id="merkle-trees"><a class="header" href="#merkle-trees">Merkle Trees</a></h3>
+<p>Merkle trees are binary trees of hashes. Merkle trees in DeFiChain use a double SHA-256. Merkle trees allow us to efficiently if check a transaction is part of the block - in <code>O(log n)</code> time.
+If, when forming a row in the tree (other than the root of the tree), it would have an odd number of elements, the final double-hash is duplicated to ensure that the row has an even number of hashes.</p>
+<p>First form the bottom row of the tree with the ordered double-SHA-256 hashes of the byte streams of the transactions in the block.</p>
+<p>Then the row above it consists of half that number of hashes. Each entry is the double-SHA-256 of the 64-byte concatenation of the corresponding two hashes below it in the tree.</p>
+<p>This procedure repeats until we reach a row consisting of just a single double-hash. This is the Merkle root of the tree.</p>
+<p>For example, imagine a block with three transactions a, b and c. The Merkle tree is:</p>
+<pre><code>d1 = dhash(a)
+d2 = dhash(b)
+d3 = dhash(c)
+d4 = dhash(c) # a, b, c are 3. that's an odd number, so we take the c twice
+
+d5 = dhash(d1 concat d2)
+d6 = dhash(d3 concat d4)
+
+d7 = dhash(d5 concat d6)
+</code></pre>
+<p>where</p>
+<pre><code>dhash(a) = sha256(sha256(a))
+</code></pre>
+<p><code>d7</code> is the Merkle root of the 3 transactions in this block.</p>
+<p>The implementation of Merkle trees can be found at <a href="https://github.com/DeFiCh/ain/blob/master/src/consensus/merkle.cpp"><code>src/consensus/merkle.cpp</code></a>.</p>
+<p>Note: Hashes in Merkle Tree displayed in the Block Explorer are of little-endian notation. For some implementations and calculations, the bytes need to be reversed before they are hashed, and again after the hashing operation.</p>
 <h2 id="block-body"><a class="header" href="#block-body">Block Body</a></h2>
+<p>The block body consists of a list of transaction pointers, which is has type <code>vector&lt;CTransactionRef&gt;</code>. The contents of each Transaction as well as the different types of Transactions are detailed in the <a href="./transaction.html">Transactions document</a>.</p>
 
                     </main>
 
