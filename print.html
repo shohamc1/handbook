@@ -188,6 +188,19 @@ in minutes - not hours.</p>
 <tr><td>stakeModifier</td><td>uint256</td><td>A stake modifier is a collective source of random entropy for mining. It is equal to <code>SHA256({previous stake modifier}, {masternode ID}).</code></td></tr>
 <tr><td>sig</td><td>vector<unsigned char></td><td>Signed block header using miner's public key.</td></tr>
 </tbody></table>
+<h3 id="hashing"><a class="header" href="#hashing">Hashing</a></h3>
+<p>Similar to the Bitcoin implementation, all usage of hashes such as <code>CHash256</code> in DeFiChain are double SHA-256 hashes. Most of the time SHA-256 hashes are used, however RIPEMD-160 is also used when a shorter hash is desirable (for example when creating a DeFiChain address).</p>
+<p>Example of double-SHA-256 encoding of string &quot;hello&quot;:</p>
+<pre><code>hello
+2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824 (first round of sha-256)
+9595c9df90075148eb06860365df33584b75bff782a510c6cd4883a419833d50 (second round of sha-256)
+</code></pre>
+<p>For bitcoin addresses (RIPEMD-160) this would give:</p>
+<pre><code>hello
+2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824 (first round is sha-256)
+b6a9c8c230722b7c748331a8b450f05566dc7d0f (with ripemd-160)
+</code></pre>
+<p>Double hashing provides protection against <a href="https://en.wikipedia.org/wiki/Length_extension_attack">length extension attacks</a> and reduces collision probability.</p>
 <h3 id="merkle-trees"><a class="header" href="#merkle-trees">Merkle Trees</a></h3>
 <p>Merkle trees are binary trees of hashes. Merkle trees in DeFiChain use a double SHA-256. Merkle trees allow us to efficiently if check a transaction is part of the block - in <code>O(log n)</code> time.
 If, when forming a row in the tree (other than the root of the tree), it would have an odd number of elements, the final double-hash is duplicated to ensure that the row has an even number of hashes.</p>
