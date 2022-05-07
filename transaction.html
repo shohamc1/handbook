@@ -149,8 +149,9 @@
 <li>have inputs and outputs</li>
 <li>difference between inputs and outputs is considered a <em>transaction fee</em></li>
 <li><strong>not</strong> encrypted</li>
+<li>identified by their <a href="./glossary.html#hashing">SHA256 hashes</a></li>
 </ul>
-<p><a href="./customtx.html">Custom Transactions</a> also exist to perform DeFi functions such as adding liquidity and performing swaps.</p>
+<p><a href="./customtx.html">Custom Transactions</a> also exist to interact with dApps such as the DeX and Loans.</p>
 <h2 id="transaction-format"><a class="header" href="#transaction-format">Transaction Format</a></h2>
 <p>Block bodies contain <a href="https://github.com/DeFiCh/ain/blob/master/src/primitives/transaction.h#L210"><code>CTransaction</code></a> which have the following structure:</p>
 <table><thead><tr><th>Name</th><th>Data Type</th><th>Description</th></tr></thead><tbody>

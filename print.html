@@ -175,13 +175,12 @@ in minutes - not hours.</p>
 <p>Parts of this handbook were edited from the <a href="https://en.bitcoin.it/wiki/Main_Page">Bitcoin Wiki</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="concepts"><a class="header" href="#concepts">Concepts</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="blocks-and-the-blockchain"><a class="header" href="#blocks-and-the-blockchain">Blocks and the Blockchain</a></h1>
-<p>The DeFiChain blockchain is a collection of interdependent blocks stored on a distributed digital ledger. Each block contains information about the block previous to it and they form a chain - with each additional block reinforcing the ones before it.</p>
-<p>Each block consists of</p>
+<p>Each DeFiChain block consists of</p>
 <ul>
-<li>a block header: contains metadata about the block and its contents</li>
+<li>a block header: contains metadata about the block and its contents and links to previous block</li>
 <li>a body: contains a list of transactions in that block.</li>
 </ul>
-<p>Blocks and transactions are identified by their <a href="./glossary.html#hashing">SHA256 hashes</a>.</p>
+<p>Blocks are identified by their <a href="./glossary.html#hashing">SHA256 hashes</a>.</p>
 <h2 id="block-header"><a class="header" href="#block-header">Block header</a></h2>
 <p>The header format of DeFiChain blocks is as follows. The implementation of the block header can be found in the class <code>CBlockHeader</code> in file <a href="https://github.com/DeFiCh/ain/blob/master/src/primitives/block.h#L23"><code>src/primitives/block.h</code></a>.</p>
 <table><thead><tr><th>Name</th><th>Data Type</th><th>Description</th></tr></thead><tbody>
@@ -216,8 +215,9 @@ in minutes - not hours.</p>
 <li>have inputs and outputs</li>
 <li>difference between inputs and outputs is considered a <em>transaction fee</em></li>
 <li><strong>not</strong> encrypted</li>
+<li>identified by their <a href="./glossary.html#hashing">SHA256 hashes</a></li>
 </ul>
-<p><a href="./customtx.html">Custom Transactions</a> also exist to perform DeFi functions such as adding liquidity and performing swaps.</p>
+<p><a href="./customtx.html">Custom Transactions</a> also exist to interact with dApps such as the DeX and Loans.</p>
 <h2 id="transaction-format"><a class="header" href="#transaction-format">Transaction Format</a></h2>
 <p>Block bodies contain <a href="https://github.com/DeFiCh/ain/blob/master/src/primitives/transaction.h#L210"><code>CTransaction</code></a> which have the following structure:</p>
 <table><thead><tr><th>Name</th><th>Data Type</th><th>Description</th></tr></thead><tbody>
